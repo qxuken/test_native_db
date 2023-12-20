@@ -12,3 +12,4 @@ uuid = { version = "1.6.1", features = ["serde", "v7"] }
 native_db = "0.5.1"
 native_model = "0.4.3"
 image = "0.24.7"
+rayon = "1.8.0"

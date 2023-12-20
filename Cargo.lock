@@ -800,6 +800,7 @@ dependencies = [
  "image",
  "native_db",
  "native_model",
+ "rayon",
  "serde",
  "uuid",
 ]
