@@ -26,14 +26,14 @@ impl Cli {
 #[derive(Debug, Subcommand)]
 enum Commands {
     All {
-        #[arg(long, value_name = "DIR", default_value = "./data")]
+        #[arg(long, value_name = "DIR", default_value = "data")]
         data_dir: PathBuf,
 
         #[arg(short, long, value_name = "FILE", default_value = "data.redb")]
         db: PathBuf,
     },
     FindById {
-        #[arg(long, value_name = "DIR", default_value = "./data")]
+        #[arg(long, value_name = "DIR", default_value = "data")]
         data_dir: PathBuf,
 
         #[arg(short, long, value_name = "FILE", default_value = "data.redb")]
@@ -43,7 +43,7 @@ enum Commands {
         id: String,
     },
     ParseCsv {
-        #[arg(long, value_name = "DIR", default_value = "./data")]
+        #[arg(long, value_name = "DIR", default_value = "data")]
         data_dir: PathBuf,
 
         #[arg(short, long, value_name = "FILE", default_value = "data.redb")]
@@ -52,7 +52,7 @@ enum Commands {
         #[arg(short, long, value_name = "FILE", default_value = "data.csv")]
         csv: PathBuf,
 
-        #[arg(value_name = "DIR", default_value = "./input")]
+        #[arg(value_name = "DIR", default_value = "input")]
         input: PathBuf,
     },
 }
@@ -74,7 +74,11 @@ impl Commands {
         let t_rw = db.rw_transaction()?;
         let artists = Self::read_csv(input, csv)?
             .into_par_iter()
-            .map(|artist| (artist, input, data_dir).try_into())
+            .map(|artist| {
+                (artist.clone(), input, data_dir)
+                    .try_into()
+                    .map_err(|e| anyhow::anyhow!("{} {}", artist.name, e))
+            })
             .collect::<Result<Vec<Artist>>>()?;
         for artist in artists.into_iter() {
             t_rw.insert(artist)?;

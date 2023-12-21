@@ -92,6 +92,9 @@ impl TryFrom<(CsvArtist, &Path, &Path)> for Artist {
                 .collect::<Vec<String>>()
                 .join("_"),
         );
+        if !img_input_path.is_dir() {
+            anyhow::bail!("Failed to find image directory: {:?}", img_input_path)
+        }
         let paintings: Vec<Paintings> = fs::read_dir(img_input_path)?
             .par_bridge()
             .map(|entry| {

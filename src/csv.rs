@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use std::path::Path;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct CsvArtist {
     pub id: u64,
     pub name: String,
